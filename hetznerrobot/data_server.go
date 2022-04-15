@@ -47,6 +47,7 @@ func dataServer() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Array of assigned single IP addresses",
+				Elem: &schema.Schema{Type: schema.TypeString},
 			},
 			"server_ip_v4_addr": {
 				Type:        schema.TypeString,
@@ -62,6 +63,7 @@ func dataServer() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Array of assigned subnets",
+				Elem: ,
 			},
 			"status": {
 				Type:        schema.TypeString,

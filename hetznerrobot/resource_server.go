@@ -56,6 +56,7 @@ func resourceServer() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Array of assigned single IP addresses",
+				Elem:,
 			},
 			"server_ip_v4_addr": {
 				Type:        schema.TypeString,
@@ -71,6 +72,18 @@ func resourceServer() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Array of assigned subnets",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ip": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"mask": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
 			},
 			"status": {
 				Type:        schema.TypeString,

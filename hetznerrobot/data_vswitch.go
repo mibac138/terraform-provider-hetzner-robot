@@ -3,14 +3,13 @@ package hetznerrobot
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strconv"
 )
 
 func dataVSwitch() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceVSwitchRead,
 		Schema: map[string]*schema.Schema{
-			"id": {
+			"vswitch_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "VSwitch ID",
@@ -34,16 +33,38 @@ func dataVSwitch() *schema.Resource {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Attached server list",
+				Elem: ,
 			},
 			"subnets": {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Attached subnet list",
+				Elem: ,
 			},
 			"cloud_networks": {
 				Type:        schema.TypeList,
 				Computed:    true,
 				Description: "Attached cloud network list",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+						"ip": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"mask": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+						"gateway": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -52,7 +73,7 @@ func dataVSwitch() *schema.Resource {
 func dataSourceVSwitchRead(d *schema.ResourceData, meta interface{}) error {
 	c := meta.(HetznerRobotClient)
 
-	vSwitchID := d.Get("id").(int)
+	vSwitchID := d.Get("vswitch_id").(int)
 	vSwitch, err := c.getVSwitch(vSwitchID)
 	if err != nil {
 		return fmt.Errorf("Unable to find VSwitch with ID %d:\n\t %q", vSwitchID, err)
@@ -64,7 +85,7 @@ func dataSourceVSwitchRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("servers", vSwitch.Server)
 	d.Set("subnets", vSwitch.Subnet)
 	d.Set("cloud_networks", vSwitch.CloudNetwork)
-	d.SetId(strconv.Itoa(vSwitchID))
+	d.Set("vswitch_id", vSwitchID)
 
 	return nil
 }
